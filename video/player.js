@@ -25,24 +25,38 @@ const rows = Math.max(10, (process.stdout.rows || 24) - 2) // -1 shell line, -1 
 const hudRow = rows + 1
 const W = cols - 1
 const H = mode === "half" ? rows * 2 : rows
-const RAMP = " .:-=+*#%@"
+// 70-level classic ramp — 7× the tonal resolution of the old 10-char one.
+const RAMP = " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 // Duration (seconds) for the progress bar + seek clamping; null = unseekable
 // (demo source / live streams / ffprobe missing).
 let duration = null
+let srcAR = 16 / 9 // display aspect of the source; demo testsrc2 is 16:9
 if (src) {
   try {
     const out = execFileSync(
       "ffprobe",
-      ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src],
+      ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:format=duration", "-of", "csv=p=0", src],
       { encoding: "utf8" },
     ).trim()
-    const n = Number(out)
-    if (Number.isFinite(n) && n > 0) duration = n
+    for (const line of out.split("\n")) {
+      const parts = line.split(",").map(Number)
+      if (parts.length >= 2 && parts[0] > 0 && parts[1] > 0) srcAR = parts[0] / parts[1]
+      else if (parts.length === 1 && Number.isFinite(parts[0]) && parts[0] > 0) duration = parts[0]
+    }
   } catch {
-    /* no ffprobe / no duration → controls degrade to pause-only */
+    /* no ffprobe → stretch-to-fit + pause-only controls */
   }
 }
+
+// Aspect-correct fit: a terminal cell is ~1:2 (w:h). In half mode a cell is
+// two stacked pixels (≈square); in ascii one cell = one pixel (2× tall).
+// Fit the source into the W×H grid, centered — never stretch.
+const pixAR = mode === "half" ? 1 : 2 // how tall one grid pixel LOOKS vs wide
+const fitW = Math.min(W, Math.round((H * srcAR) / pixAR / 2) * 2)
+const fitH = Math.min(H, Math.round((W * pixAR) / srcAR / 2) * 2)
+const drawW = Math.min(W, Math.max(2, fitW))
+const drawH = Math.min(H, Math.max(2, fitH))
 
 let ff = null
 let base = 0 // seek offset the current ffmpeg started at
@@ -62,7 +76,8 @@ function ffmpegArgs(startAt) {
   const input = src
     ? [...(loop ? ["-stream_loop", "-1"] : []), ...(startAt > 0 ? ["-ss", String(startAt)] : []), "-re", "-i", src]
     : ["-re", "-f", "lavfi", "-i", `testsrc2=size=640x360:rate=${fps}`]
-  return [...input, "-f", "rawvideo", "-pix_fmt", "rgb24", "-vf", `fps=${fps},scale=${W}:${H}`, "-loglevel", "error", "pipe:1"]
+  const vf = `fps=${fps},scale=${drawW}:${drawH},pad=${W}:${H}:${Math.floor((W - drawW) / 2)}:${Math.floor((H - drawH) / 2)}:black`
+  return [...input, "-f", "rawvideo", "-pix_fmt", "rgb24", "-vf", vf, "-loglevel", "error", "pipe:1"]
 }
 
 function renderHalf(frame) {
