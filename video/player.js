@@ -68,7 +68,10 @@ let pendingBytes = 0
 const frameSize = W * H * 3
 
 function position() {
-  return base + consumed / fps
+  const raw = base + consumed / fps
+  // -stream_loop keeps the frame counter climbing forever — wrap the
+  // DISPLAYED position back to the start of each pass.
+  return loop && duration ? raw % duration : raw
 }
 
 function ffmpegArgs(startAt) {
