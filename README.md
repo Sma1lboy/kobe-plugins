@@ -15,7 +15,7 @@ kobe plugin install Sma1lboy/kobe-plugins/browser           # Chromium in a spli
 kobe plugin install Sma1lboy/kobe-plugins/video             # play any video as ANSI/ASCII characters in a tab
 ```
 
-Docs: [plugin authoring & manifest reference](https://github.com/Sma1lboy/kobe/blob/main/docs/design/plugins.md)
+Docs: [plugin authoring reference](https://github.com/Sma1lboy/kobe/blob/main/docs/PLUGIN-AUTHORING.md)
 · [lifecycle events](https://github.com/Sma1lboy/kobe/blob/main/docs/design/plugin-events.md)
 · browse the marketplace at [kobe.sma1lboy.me/plugins](https://kobe.sma1lboy.me/plugins) or `kobe plugin search`.
 
