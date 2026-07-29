@@ -6,12 +6,14 @@
 //   half  (default)  half-block ▀ cells — reads like actual (chunky) video
 //   ascii            luminance-ramp ASCII chars with truecolor — the toy look
 //
-// No video is ever "played": it's characters, repainted at ~15fps.
+// Controls: space pause/resume (SIGSTOP/SIGCONT on ffmpeg) · ←/→ ±5s ·
+// 0-9 jump to N×10% · click/drag the progress bar (SGR mouse) · q quit.
+// Seeking restarts ffmpeg with -ss; position = seek base + consumed frames.
 //
 // Usage: node player.js <file-or-url>        (no arg → built-in demo source)
 // Env:   KOBE_VIDEO_MODE=ascii|half  KOBE_VIDEO_FPS  KOBE_VIDEO_LOOP=1
 
-const { spawn } = require("node:child_process")
+const { spawn, execFileSync } = require("node:child_process")
 
 const src = process.argv[2]
 const mode = process.env.KOBE_VIDEO_MODE === "ascii" ? "ascii" : "half"
@@ -19,24 +21,47 @@ const fps = Math.max(1, Math.min(30, Number(process.env.KOBE_VIDEO_FPS) || 15))
 const loop = process.env.KOBE_VIDEO_LOOP === "1"
 
 const cols = Math.max(20, process.stdout.columns || 80)
-const rows = Math.max(10, (process.stdout.rows || 24) - 1)
-// half mode packs 2 pixels per cell vertically; ascii is 1 pixel per cell.
+const rows = Math.max(10, (process.stdout.rows || 24) - 2) // -1 shell line, -1 HUD
+const hudRow = rows + 1
 const W = cols - 1
 const H = mode === "half" ? rows * 2 : rows
 const RAMP = " .:-=+*#%@"
 
-function ffmpegArgs() {
+// Duration (seconds) for the progress bar + seek clamping; null = unseekable
+// (demo source / live streams / ffprobe missing).
+let duration = null
+if (src) {
+  try {
+    const out = execFileSync(
+      "ffprobe",
+      ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src],
+      { encoding: "utf8" },
+    ).trim()
+    const n = Number(out)
+    if (Number.isFinite(n) && n > 0) duration = n
+  } catch {
+    /* no ffprobe / no duration → controls degrade to pause-only */
+  }
+}
+
+let ff = null
+let base = 0 // seek offset the current ffmpeg started at
+let consumed = 0 // complete frames consumed since the current spawn
+let paused = false
+let quitting = false
+let pending = []
+let pendingBytes = 0
+const frameSize = W * H * 3
+
+function position() {
+  return base + consumed / fps
+}
+
+function ffmpegArgs(startAt) {
   const input = src
-    ? ["-re", "-i", src, ...(loop ? ["-stream_loop", "-1"] : [])]
+    ? [...(startAt > 0 ? ["-ss", String(startAt)] : []), "-re", "-i", src, ...(loop ? ["-stream_loop", "-1"] : [])]
     : ["-re", "-f", "lavfi", "-i", `testsrc2=size=640x360:rate=${fps}`]
-  return [
-    ...input,
-    "-f", "rawvideo",
-    "-pix_fmt", "rgb24",
-    "-vf", `fps=${fps},scale=${W}:${H}`,
-    "-loglevel", "error",
-    "pipe:1",
-  ]
+  return [...input, "-f", "rawvideo", "-pix_fmt", "rgb24", "-vf", `fps=${fps},scale=${W}:${H}`, "-loglevel", "error", "pipe:1"]
 }
 
 function renderHalf(frame) {
@@ -79,45 +104,144 @@ function renderAscii(frame) {
   return out.join("")
 }
 
+function fmtTime(s) {
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`
+}
+
+function renderHud() {
+  const icon = paused ? "⏸" : "▶"
+  const time = duration ? `${fmtTime(position())}/${fmtTime(duration)}` : fmtTime(position())
+  const hint = duration ? "space ←→ 0-9 q" : "space q"
+  const fixed = ` ${icon} ${time}  `
+  const barWidth = Math.max(4, W - fixed.length - hint.length - 3)
+  let bar = ""
+  if (duration) {
+    const frac = Math.max(0, Math.min(1, position() / duration))
+    const dot = Math.min(barWidth - 1, Math.round(frac * (barWidth - 1)))
+    bar = `${"─".repeat(dot)}●${"─".repeat(barWidth - 1 - dot)}`
+  } else {
+    bar = "─".repeat(barWidth)
+  }
+  return `\x1b[${hudRow};1H\x1b[0m\x1b[2m${fixed}\x1b[0m${bar}\x1b[2m  ${hint}\x1b[0m\x1b[K`
+}
+
+// Progress-bar geometry for mouse hits — must match renderHud.
+function barSpan() {
+  const icon = paused ? "⏸" : "▶"
+  const time = duration ? `${fmtTime(position())}/${fmtTime(duration)}` : fmtTime(position())
+  const hint = duration ? "space ←→ 0-9 q" : "space q"
+  const start = ` ${icon} ${time}  `.length + 1
+  const width = Math.max(4, W - (start - 1) - hint.length - 3)
+  return { start, width }
+}
+
+function startFF(startAt) {
+  base = startAt
+  consumed = 0
+  pending = []
+  pendingBytes = 0
+  ff = spawn("ffmpeg", ffmpegArgs(startAt), { stdio: ["ignore", "pipe", "inherit"] })
+  const proc = ff
+  ff.on("error", () => {
+    process.stdout.write("\x1b[?25h")
+    console.error("examples.video needs ffmpeg on PATH (brew install ffmpeg)")
+    process.exit(1)
+  })
+  ff.stdout.on("data", (chunk) => {
+    pending.push(chunk)
+    pendingBytes += chunk.length
+    if (pendingBytes < frameSize) return
+    const all = Buffer.concat(pending)
+    let off = 0
+    // Render only the LAST complete frame in the buffer — if the terminal
+    // can't keep up, we drop frames instead of drifting behind ffmpeg's -re.
+    let frame = null
+    while (all.length - off >= frameSize) {
+      frame = all.subarray(off, off + frameSize)
+      off += frameSize
+      consumed++
+    }
+    pending = off < all.length ? [all.subarray(off)] : []
+    pendingBytes = all.length - off
+    if (frame && !paused) {
+      process.stdout.write((mode === "half" ? renderHalf(frame) : renderAscii(frame)) + renderHud())
+    }
+  })
+  ff.on("close", (code) => {
+    // A seek supersedes this process with a fresh one — its exit is not "the end".
+    if (quitting || proc !== ff) return
+    process.stdout.write("\x1b[0m\x1b[?25h\n")
+    if (code !== 0 && code !== null) process.exit(code)
+    console.log(src ? "playback finished — press enter to close (←/0 to replay)" : "demo finished")
+  })
+}
+
+function seekTo(pos) {
+  if (!duration) return
+  const clamped = Math.max(0, Math.min(duration - 0.5, pos))
+  try {
+    ff?.kill("SIGKILL")
+  } catch {}
+  paused = false
+  startFF(clamped)
+  process.stdout.write(renderHud())
+}
+
+function togglePause() {
+  if (!ff || ff.exitCode !== null) return
+  paused = !paused
+  try {
+    ff.kill(paused ? "SIGSTOP" : "SIGCONT")
+  } catch {
+    /* process gone */
+  }
+  process.stdout.write(renderHud())
+}
+
 function cleanup(code) {
-  process.stdout.write("\x1b[0m\x1b[?25h\x1b[2J\x1b[H")
+  quitting = true
+  try {
+    ff?.kill("SIGKILL")
+  } catch {}
+  process.stdout.write("\x1b[0m\x1b[?25h\x1b[?1002l\x1b[?1006l\x1b[2J\x1b[H")
   process.exit(code)
 }
 
-const ff = spawn("ffmpeg", ffmpegArgs(), { stdio: ["ignore", "pipe", "inherit"] })
-ff.on("error", () => {
-  console.error("examples.video needs ffmpeg on PATH (brew install ffmpeg)")
-  process.exit(1)
-})
+// ---- input: keys + SGR mouse (click/drag the progress bar) ----
+function handleMouse(seq) {
+  // \x1b[<b;x;yM (press/drag) — seek when it lands on the HUD's bar row.
+  const m = seq.match(/^\x1b\[<(\d+);(\d+);(\d+)([Mm])$/)
+  if (!m || !duration) return
+  const [, btn, xs, ys, kind] = m
+  const button = Number(btn)
+  const x = Number(xs)
+  const y = Number(ys)
+  const isPressOrDrag = kind === "M" && (button === 0 || button === 32)
+  if (!isPressOrDrag || y !== hudRow) return
+  const { start, width } = barSpan()
+  const frac = Math.max(0, Math.min(1, (x - start) / width))
+  seekTo(frac * duration)
+}
 
-process.stdout.write("\x1b[?25l\x1b[2J")
+if (process.stdin.isTTY) {
+  process.stdin.setRawMode(true)
+  process.stdin.resume()
+  process.stdin.on("data", (data) => {
+    const s = data.toString()
+    if (s.startsWith("\x1b[<")) return handleMouse(s)
+    for (const ch of s) {
+      if (ch === "q" || ch === "\x03") cleanup(0)
+      else if (ch === " ") togglePause()
+      else if (ch >= "0" && ch <= "9" && duration) seekTo((Number(ch) / 10) * duration)
+    }
+    if (s === "\x1b[C" && duration) seekTo(position() + 5) // →
+    if (s === "\x1b[D" && duration) seekTo(position() - 5) // ←
+  })
+}
+
+process.stdout.write("\x1b[?25l\x1b[2J\x1b[?1006h\x1b[?1002h")
 process.on("SIGINT", () => cleanup(0))
 process.on("SIGTERM", () => cleanup(0))
-
-const frameSize = W * H * 3
-let pending = []
-let pendingBytes = 0
-ff.stdout.on("data", (chunk) => {
-  pending.push(chunk)
-  pendingBytes += chunk.length
-  if (pendingBytes < frameSize) return
-  const all = Buffer.concat(pending)
-  let off = 0
-  // Render only the LAST complete frame in the buffer — if the terminal
-  // can't keep up, we drop frames instead of drifting behind ffmpeg's -re.
-  let frame = null
-  while (all.length - off >= frameSize) {
-    frame = all.subarray(off, off + frameSize)
-    off += frameSize
-  }
-  pending = off < all.length ? [all.subarray(off)] : []
-  pendingBytes = all.length - off
-  if (frame) process.stdout.write(mode === "half" ? renderHalf(frame) : renderAscii(frame))
-})
-ff.on("close", (code) => {
-  process.stdout.write("\x1b[0m\x1b[?25h\n")
-  if (code !== 0 && code !== null) process.exit(code)
-  console.log(src ? "playback finished — press enter to close" : "demo finished")
-  process.stdin.resume()
-  process.stdin.once("data", () => cleanup(0))
-})
+startFF(0)
