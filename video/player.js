@@ -21,7 +21,7 @@ const loop = process.env.KOBE_VIDEO_LOOP === "1"
 const cols = Math.max(20, process.stdout.columns || 80)
 const rows = Math.max(10, (process.stdout.rows || 24) - 1)
 // half mode packs 2 pixels per cell vertically; ascii is 1 pixel per cell.
-const W = cols
+const W = cols - 1
 const H = mode === "half" ? rows * 2 : rows
 const RAMP = " .:-=+*#%@"
 
@@ -40,8 +40,11 @@ function ffmpegArgs() {
 }
 
 function renderHalf(frame) {
-  const out = ["\x1b[H"]
+  const out = []
   for (let y = 0; y + 1 < H; y += 2) {
+    // Absolute row addressing — newline-free, so a cols mismatch can never
+    // wrap a line into a phantom blank row (the "zebra stripes" failure).
+    out.push(`\x1b[${y / 2 + 1};1H`)
     let last = ""
     for (let x = 0; x < W; x++) {
       const t = (y * W + x) * 3
@@ -50,16 +53,15 @@ function renderHalf(frame) {
       out.push(key === last ? "▀" : key + "▀")
       last = key
     }
-    out.push("\x1b[0m\n")
+    out.push("\x1b[0m")
   }
-  out.pop()
-  out.push("\x1b[0m")
   return out.join("")
 }
 
 function renderAscii(frame) {
-  const out = ["\x1b[H"]
+  const out = []
   for (let y = 0; y < H; y++) {
+    out.push(`\x1b[${y + 1};1H`)
     let last = ""
     for (let x = 0; x < W; x++) {
       const i = (y * W + x) * 3
@@ -72,10 +74,8 @@ function renderAscii(frame) {
       out.push(key === last ? ch : key + ch)
       last = key
     }
-    out.push("\x1b[0m\n")
+    out.push("\x1b[0m")
   }
-  out.pop()
-  out.push("\x1b[0m")
   return out.join("")
 }
 
