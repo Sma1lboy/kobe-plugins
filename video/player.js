@@ -58,8 +58,9 @@ function position() {
 }
 
 function ffmpegArgs(startAt) {
+  // -stream_loop and -ss are INPUT options — they must precede -i.
   const input = src
-    ? [...(startAt > 0 ? ["-ss", String(startAt)] : []), "-re", "-i", src, ...(loop ? ["-stream_loop", "-1"] : [])]
+    ? [...(loop ? ["-stream_loop", "-1"] : []), ...(startAt > 0 ? ["-ss", String(startAt)] : []), "-re", "-i", src]
     : ["-re", "-f", "lavfi", "-i", `testsrc2=size=640x360:rate=${fps}`]
   return [...input, "-f", "rawvideo", "-pix_fmt", "rgb24", "-vf", `fps=${fps},scale=${W}:${H}`, "-loglevel", "error", "pipe:1"]
 }
