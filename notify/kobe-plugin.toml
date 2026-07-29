@@ -15,7 +15,6 @@ command = ["npm", "run", "build"]
 key = "NTFY_URL"
 label = "ntfy push URL"
 type = "string"
-default = ""
 
 [[events]]
 on = "agent.turn-complete"

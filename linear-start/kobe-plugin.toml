@@ -15,7 +15,6 @@ command = ["npm", "run", "build"]
 key = "LINEAR_API_KEY"
 label = "Linear API key"
 type = "string"
-default = ""
 
 [[actions]]
 id = "start"
