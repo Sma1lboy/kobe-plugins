@@ -5,7 +5,13 @@ min_kobe_version = "0.8.22"
 description = "Create a kobe task (worktree + engine session) from a GitHub issue or PR"
 platforms = ["macos", "linux", "windows"]
 
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
 [[actions]]
 id = "start"
 title = "Start a task from a GitHub issue/PR URL"
-command = ["node", "start.js"]
+command = ["node", "dist/start.js"]

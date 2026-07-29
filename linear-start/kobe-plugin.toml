@@ -5,7 +5,19 @@ min_kobe_version = "0.8.22"
 description = "Pick a Linear issue and start a kobe task on the issue's branch, with the issue as the first prompt"
 platforms = ["macos", "linux"]
 
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
+[[settings]]
+key = "LINEAR_API_KEY"
+label = "Linear API key"
+type = "string"
+default = ""
+
 [[actions]]
 id = "start"
 title = "Start a task from a Linear issue"
-command = ["node", "start.js"]
+command = ["node", "dist/start.js"]

@@ -11,15 +11,19 @@ platforms = ["macos", "linux"]
 [[build]]
 command = ["npm", "install", "--no-audit", "--no-fund"]
 
+# Built on @sma1lboy/kobe-plugin-sdk (TypeScript) — compiled at install time.
+[[build]]
+command = ["npm", "run", "build"]
+
 [[panes]]
 id = "browse"
 title = "Browser"
-command = ["sh", "$KOBE_PLUGIN_ROOT/browse.sh"]
+command = ["node", "$KOBE_PLUGIN_ROOT/dist/browse.js"]
 
 [[actions]]
 id = "open"
 title = "Open a URL in the browser pane"
-command = ["sh", "open.sh"]
+command = ["node", "dist/open.js"]
 
 [[settings]]
 key = "BROWSER_HOME"

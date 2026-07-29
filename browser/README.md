@@ -9,7 +9,7 @@ scrolling, even video.
 ```bash
 kobe plugin install Sma1lboy/kobe-plugins/browser    # self-provisions carbonyl into the plugin dir
 
-kobe plugin pane open examples.browser.browse    # inline url prompt (enter = last URL / home)
+kobe plugin pane open examples.browser.browse    # URL via the host's input dialog (enter = last URL / home)
 kobe plugin action invoke examples.browser.open localhost:5173         # open a URL
 ```
 
@@ -17,6 +17,11 @@ The install's `[[build]]` step runs `npm install` inside the plugin's own
 checkout, so Chromium lives under `~/.kobe/plugins/examples.browser/` —
 nothing global. (A `kobe plugin link` skips build; the pane self-provisions
 on first open instead.)
+
+Built on [`@sma1lboy/kobe-plugin-sdk`](https://github.com/Sma1lboy/kobe/tree/main/packages/kobe-plugin-sdk)
+(TypeScript, compiled at install). The URL prompt uses the host's input
+dialog (`promptUser()` → `kobe api prompt`); on kobe versions without it
+the pane falls back to an inline readline prompt.
 
 Set a home page: `echo 'BROWSER_HOME=https://news.ycombinator.com' >
 "$(kobe plugin config-dir examples.browser)/.env"`. Bind a chord yourself in

@@ -15,3 +15,6 @@ kobe plugin action invoke examples.linear-start.start KOB-12    # direct
 
 Requires `node`; `fzf` is optional. The API key comes from Linear →
 Settings → Security & access → API.
+
+Written in TypeScript on [`@sma1lboy/kobe-plugin-sdk`](https://www.npmjs.com/package/@sma1lboy/kobe-plugin-sdk);
+the install-time build steps compile `src/start.ts` to `dist/start.js`.

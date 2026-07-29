@@ -15,9 +15,18 @@ kobe plugin install Sma1lboy/kobe-plugins/browser           # Chromium in a spli
 kobe plugin install Sma1lboy/kobe-plugins/video             # play any video as ANSI/ASCII characters in a tab
 ```
 
+These plugins are written in TypeScript on
+[`@sma1lboy/kobe-plugin-sdk`](https://www.npmjs.com/package/@sma1lboy/kobe-plugin-sdk)
+(typed events, settings, daemon socket, host input dialog) and compiled by
+their `[[build]]` steps at install time — they double as reference
+implementations. The SDK is optional sugar: the plugin contract stays plain
+env + CLI + socket, any language works (`lazygit/` is manifest-only).
+
 Docs: [plugin authoring reference](https://github.com/Sma1lboy/kobe/blob/main/docs/PLUGIN-AUTHORING.md)
 · [lifecycle events](https://github.com/Sma1lboy/kobe/blob/main/docs/design/plugin-events.md)
 · browse the marketplace at [kobe.sma1lboy.me/plugins](https://kobe.sma1lboy.me/plugins) or `kobe plugin search`.
+
+Keep installed plugins fresh with `kobe plugin outdated` / `kobe plugin update --all`.
 
 Fork one, change the `id`, publish your own public repo with the GitHub topic
 `kobe-plugin`, and it appears in the marketplace automatically.

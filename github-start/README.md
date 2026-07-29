@@ -11,3 +11,6 @@ kobe plugin action invoke examples.github-start.start https://github.com/owner/r
 ```
 
 Requires `node` and an authenticated `gh` CLI.
+
+Written in TypeScript on [`@sma1lboy/kobe-plugin-sdk`](https://www.npmjs.com/package/@sma1lboy/kobe-plugin-sdk);
+the install-time build steps compile `src/start.ts` to `dist/start.js`.

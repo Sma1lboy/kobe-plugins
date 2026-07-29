@@ -5,23 +5,35 @@ min_kobe_version = "0.8.22"
 description = "Desktop (and optional ntfy push) notifications when an agent finishes, errors, or needs you"
 platforms = ["macos", "linux"]
 
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
+[[settings]]
+key = "NTFY_URL"
+label = "ntfy push URL"
+type = "string"
+default = ""
+
 [[events]]
 on = "agent.turn-complete"
-command = ["sh", "notify.sh"]
+command = ["node", "dist/notify.js"]
 
 [[events]]
 on = "agent.permission-needed"
-command = ["sh", "notify.sh"]
+command = ["node", "dist/notify.js"]
 
 [[events]]
 on = "agent.rate-limited"
-command = ["sh", "notify.sh"]
+command = ["node", "dist/notify.js"]
 
 [[events]]
 on = "agent.error"
-command = ["sh", "notify.sh"]
+command = ["node", "dist/notify.js"]
 
 [[actions]]
 id = "test"
 title = "Send a test notification"
-command = ["sh", "notify.sh", "test"]
+command = ["node", "dist/notify.js", "test"]

@@ -15,3 +15,6 @@ Phone push (optional):
 ```bash
 echo 'NTFY_URL=https://ntfy.sh/<your-topic>' > "$(kobe plugin config-dir examples.notify)/.env"
 ```
+
+Written in TypeScript on [`@sma1lboy/kobe-plugin-sdk`](https://www.npmjs.com/package/@sma1lboy/kobe-plugin-sdk);
+the install-time build steps compile `src/notify.ts` to `dist/notify.js`.

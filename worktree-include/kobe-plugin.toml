@@ -5,6 +5,12 @@ min_kobe_version = "0.8.22"
 description = "Copy gitignored files matching .worktreeinclude into every new task worktree"
 platforms = ["macos", "linux", "windows"]
 
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
 [[events]]
 on = "worktree.created"
-command = ["node", "copy.js"]
+command = ["node", "dist/copy.js"]

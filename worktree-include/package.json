@@ -1,0 +1,15 @@
+{
+  "name": "kobe-plugin-worktree-include",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@sma1lboy/kobe-plugin-sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "@types/node": "^22.13.10"
+  }
+}

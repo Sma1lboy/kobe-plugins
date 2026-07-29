@@ -5,16 +5,23 @@ min_kobe_version = "0.8.24"
 description = "Play any video as ANSI/ASCII characters in a tab — ffmpeg decode, character render, no real video anywhere"
 platforms = ["macos", "linux"]
 
+# Built on @sma1lboy/kobe-plugin-sdk (TypeScript) — compiled at install time.
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
 [[panes]]
 id = "play"
 title = "Video"
 placement = "tab"
-command = ["sh", "$KOBE_PLUGIN_ROOT/play.sh"]
+command = ["node", "$KOBE_PLUGIN_ROOT/dist/player.js"]
 
 [[actions]]
 id = "open"
 title = "Play a video file/URL as characters"
-command = ["sh", "open.sh"]
+command = ["node", "dist/open.js"]
 
 [[settings]]
 key = "KOBE_VIDEO_MODE"

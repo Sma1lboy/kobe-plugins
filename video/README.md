@@ -1,8 +1,10 @@
 # examples.video
 
 Play any video as terminal characters, in a kobe tab. ffmpeg decodes to a
-raw RGB pipe; a ~130-line zero-dependency script repaints every frame as
-ANSI truecolor cells. **No video is ever actually played — it's characters.**
+raw RGB pipe; a small TypeScript player (built on
+[`@sma1lboy/kobe-plugin-sdk`](https://github.com/Sma1lboy/kobe/tree/main/packages/kobe-plugin-sdk),
+compiled at install) repaints every frame as ANSI truecolor cells.
+**No video is ever actually played — it's characters.**
 
 Two looks (`KOBE_VIDEO_MODE` in the plugin `.env`):
 - `half` (default) — half-block `▀` cells, two pixels per cell: reads like
@@ -17,7 +19,8 @@ kobe plugin action invoke examples.video.open ~/Movies/clip.mp4 # play a file
 kobe plugin action invoke examples.video.open https://…/clip.mp4
 ```
 
-Config (`$(kobe plugin config-dir examples.video)/.env`):
+Config: Settings → Plugins → Video (or
+`$(kobe plugin config-dir examples.video)/.env`):
 `KOBE_VIDEO_MODE=ascii` · `KOBE_VIDEO_FPS=24` · `KOBE_VIDEO_LOOP=1`.
 
 Requires `ffmpeg` on PATH. Opens as its own tab (`placement = "tab"`) —
