@@ -1,6 +1,6 @@
-id = "examples.github-start"
+id = "kobe.github-start"
 name = "GitHub Start"
-version = "0.1.0"
+version = "0.2.0"
 min_kobe_version = "0.8.22"
 description = "Create a kobe task (worktree + engine session) from a GitHub issue or PR"
 platforms = ["macos", "linux", "windows"]

@@ -1,7 +1,7 @@
-id = "examples.browser"
+id = "kobe.browser"
 name = "Browser"
-version = "0.1.0"
-min_kobe_version = "0.8.24"
+version = "0.2.0"
+min_kobe_version = "0.8.29"
 description = "A real Chromium browser rendered as terminal cells (carbonyl) in a pane tab"
 platforms = ["macos", "linux"]
 

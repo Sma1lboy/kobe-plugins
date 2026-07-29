@@ -1,4 +1,4 @@
-# examples.browser
+# kobe.browser
 
 A real Chromium browser inside a kobe pane tab, via
 [carbonyl](https://github.com/fathyb/carbonyl) — Chromium rendered as plain
@@ -9,12 +9,12 @@ scrolling, even video.
 ```bash
 kobe plugin install Sma1lboy/kobe-plugins/browser    # self-provisions carbonyl into the plugin dir
 
-kobe plugin pane open examples.browser.browse    # URL via the host's input dialog (enter = last URL / home)
-kobe plugin action invoke examples.browser.open localhost:5173         # open a URL
+kobe plugin pane open kobe.browser.browse    # URL via the host's input dialog (enter = last URL / home)
+kobe plugin action invoke kobe.browser.open localhost:5173         # open a URL
 ```
 
 The install's `[[build]]` step runs `npm install` inside the plugin's own
-checkout, so Chromium lives under `~/.kobe/plugins/examples.browser/` —
+checkout, so Chromium lives under `~/.kobe/plugins/kobe.browser/` —
 nothing global. (A `kobe plugin link` skips build; the pane self-provisions
 on first open instead.)
 
@@ -24,12 +24,12 @@ dialog (`promptUser()` → `kobe api prompt`); on kobe versions without it
 the pane falls back to an inline readline prompt.
 
 Set a home page: `echo 'BROWSER_HOME=https://news.ycombinator.com' >
-"$(kobe plugin config-dir examples.browser)/.env"`. Bind a chord yourself in
+"$(kobe plugin config-dir kobe.browser)/.env"`. Bind a chord yourself in
 `~/.kobe/settings/keybindings.yaml`:
 
 ```yaml
 plugins:
-  ctrl+b: pane:examples.browser.browse
+  ctrl+b: pane:kobe.browser.browse
 ```
 
 Scope note: carbonyl is for previewing dev servers and watching pages without

@@ -1,6 +1,6 @@
-// examples.github-start — create a kobe task from a GitHub issue or PR.
+// kobe.github-start — create a kobe task from a GitHub issue or PR.
 //
-//   kobe plugin action invoke examples.github-start.start <issue-or-pr-url>
+//   kobe plugin action invoke kobe.github-start.start <issue-or-pr-url>
 //
 // Fetches title/body via the `gh` CLI, then calls back into kobe
 // (`kobe api add --prompt …`) which creates the task, materializes the
@@ -13,7 +13,7 @@ import { kobe } from "@sma1lboy/kobe-plugin-sdk"
 const url = process.argv[2]
 const match = url?.match(/github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/)
 if (!match) {
-  console.error("usage: kobe plugin action invoke examples.github-start.start <github issue/pr url>")
+  console.error("usage: kobe plugin action invoke kobe.github-start.start <github issue/pr url>")
   process.exit(2)
 }
 const [, owner, repo, kind, number] = match

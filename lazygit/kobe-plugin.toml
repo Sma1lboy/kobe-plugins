@@ -1,11 +1,22 @@
-id = "examples.lazygit"
+id = "kobe.lazygit"
 name = "Lazygit"
-version = "0.1.0"
-min_kobe_version = "0.8.22"
-description = "Open lazygit on the task's worktree in a terminal tab"
+version = "0.2.0"
+min_kobe_version = "0.8.24"
+description = "Open lazygit on the task's worktree — its own tab, or split beside the engine"
 platforms = ["macos", "linux"]
 
+# Default: lazygit gets the whole screen. It's a full-screen TUI with its
+# own panel layout, so squeezing it beside a chat is the exception.
 [[panes]]
 id = "git"
 title = "lazygit"
+placement = "tab"
+command = ["lazygit"]
+
+# Same thing, split into the focused chat tab's group — for staging a hunk
+# without leaving the conversation.
+[[panes]]
+id = "split"
+title = "lazygit (split)"
+placement = "split"
 command = ["lazygit"]

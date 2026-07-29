@@ -1,4 +1,4 @@
-// examples.worktree-include — when kobe creates a task worktree, copy files
+// kobe.worktree-include — when kobe creates a task worktree, copy files
 // from the repo root that match patterns in the repo's `.worktreeinclude`
 // (one pattern per line, `#` comments). Typical use: `.env`, `.env.local`,
 // untracked config a fresh worktree needs to build.

@@ -1,4 +1,4 @@
-# examples.video
+# kobe.video
 
 Play any video as terminal characters, in a kobe tab. ffmpeg decodes to a
 raw RGB pipe; a small TypeScript player (built on
@@ -14,13 +14,13 @@ Two looks (`KOBE_VIDEO_MODE` in the plugin `.env`):
 ```bash
 kobe plugin install Sma1lboy/kobe-plugins/video
 
-kobe plugin pane open examples.video.play                       # built-in demo source
-kobe plugin action invoke examples.video.open ~/Movies/clip.mp4 # play a file
-kobe plugin action invoke examples.video.open https://…/clip.mp4
+kobe plugin pane open kobe.video.play                       # built-in demo source
+kobe plugin action invoke kobe.video.open ~/Movies/clip.mp4 # play a file
+kobe plugin action invoke kobe.video.open https://…/clip.mp4
 ```
 
 Config: Settings → Plugins → Video (or
-`$(kobe plugin config-dir examples.video)/.env`):
+`$(kobe plugin config-dir kobe.video)/.env`):
 `KOBE_VIDEO_MODE=ascii` · `KOBE_VIDEO_FPS=24` · `KOBE_VIDEO_LOOP=1`.
 
 Requires `ffmpeg` on PATH. Opens as its own tab (`placement = "tab"`) —

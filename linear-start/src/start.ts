@@ -1,6 +1,6 @@
-// examples.linear-start — start a kobe task from a Linear issue.
+// kobe.linear-start — start a kobe task from a Linear issue.
 //
-//   kobe plugin action invoke examples.linear-start.start [ISSUE-ID]
+//   kobe plugin action invoke kobe.linear-start.start [ISSUE-ID]
 //
 // With an id (e.g. KOB-12) it goes straight to `kobe api add`; without one it
 // lists your open assigned issues and picks via fzf (numbered prompt when fzf
@@ -23,7 +23,7 @@ function apiKey(): string {
   if (process.env.LINEAR_API_KEY) return process.env.LINEAR_API_KEY
   const fromConfig = setting(process.env.KOBE_PLUGIN_CONFIG_DIR ?? "", "LINEAR_API_KEY").trim()
   if (fromConfig) return fromConfig
-  console.error('missing LINEAR_API_KEY — put it in "$(kobe plugin config-dir examples.linear-start)/.env"')
+  console.error('missing LINEAR_API_KEY — put it in "$(kobe plugin config-dir kobe.linear-start)/.env"')
   process.exit(1)
 }
 

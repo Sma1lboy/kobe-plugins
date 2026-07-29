@@ -1,4 +1,4 @@
-# examples.worktree-include
+# kobe.worktree-include
 
 A fresh git worktree has no gitignored files — no `.env`, no local config.
 This plugin watches `worktree.created` and copies files matching the repo's

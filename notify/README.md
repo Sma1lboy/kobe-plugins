@@ -1,4 +1,4 @@
-# examples.notify
+# kobe.notify
 
 Desktop notifications (macOS `osascript`, Linux `notify-send`) whenever a kobe
 agent finishes a turn, errors, hits a rate limit, or waits on a permission
@@ -7,13 +7,13 @@ so it reaches your phone.
 
 ```bash
 kobe plugin install Sma1lboy/kobe-plugins/notify
-kobe plugin action invoke examples.notify.test        # smoke-test it
+kobe plugin action invoke kobe.notify.test        # smoke-test it
 ```
 
 Phone push (optional):
 
 ```bash
-echo 'NTFY_URL=https://ntfy.sh/<your-topic>' > "$(kobe plugin config-dir examples.notify)/.env"
+echo 'NTFY_URL=https://ntfy.sh/<your-topic>' > "$(kobe plugin config-dir kobe.notify)/.env"
 ```
 
 Written in TypeScript on [`@sma1lboy/kobe-plugin-sdk`](https://www.npmjs.com/package/@sma1lboy/kobe-plugin-sdk);

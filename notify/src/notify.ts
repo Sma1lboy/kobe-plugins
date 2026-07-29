@@ -1,4 +1,4 @@
-// examples.notify — desktop + optional ntfy notification for kobe agent events.
+// kobe.notify — desktop + optional ntfy notification for kobe agent events.
 // The `test` action invokes this with argv "test"; events set KOBE_PLUGIN_EVENT.
 
 import { execFileSync } from "node:child_process"
@@ -14,7 +14,7 @@ const bodies: Record<string, string> = {
   "agent.rate-limited": `${task}: agent hit a rate limit`,
   "agent.error": `${task}: agent errored`,
 }
-const body = bodies[event] ?? "Test notification from examples.notify"
+const body = bodies[event] ?? "Test notification from kobe.notify"
 
 if (process.platform === "darwin") {
   // ponytail: naive quote-stripping instead of full AppleScript escaping

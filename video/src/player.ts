@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// examples.video — play any video as terminal characters, right in a kobe tab.
+// kobe.video — play any video as terminal characters, right in a kobe tab.
 //
 // ffmpeg decodes to a raw RGB pipe; this script folds every frame into ANSI
 // truecolor cells. Two looks:
@@ -64,7 +64,7 @@ const loop = (settings.KOBE_VIDEO_LOOP ?? process.env.KOBE_VIDEO_LOOP) === "1"
 try {
   execFileSync("ffmpeg", ["-version"], { stdio: "ignore", env: ENV })
 } catch {
-  failHolding("examples.video needs ffmpeg on PATH (brew install ffmpeg)")
+  failHolding("kobe.video needs ffmpeg on PATH (brew install ffmpeg)")
 }
 
 const cols = Math.max(20, process.stdout.columns || 80)
@@ -214,7 +214,7 @@ function startFF(startAt: number): void {
   const proc = ff
   ff.on("error", () => {
     process.stdout.write("\x1b[?25h")
-    console.error("examples.video needs ffmpeg on PATH (brew install ffmpeg)")
+    console.error("kobe.video needs ffmpeg on PATH (brew install ffmpeg)")
     process.exit(1)
   })
   ff.stdout?.on("data", (chunk: Buffer) => {

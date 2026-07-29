@@ -10,7 +10,7 @@ kobe plugin install Sma1lboy/kobe-plugins/notify            # desktop/ntfy notif
 kobe plugin install Sma1lboy/kobe-plugins/github-start      # start a task from a GitHub issue/PR
 kobe plugin install Sma1lboy/kobe-plugins/worktree-include  # copy .env-style files into new worktrees
 kobe plugin install Sma1lboy/kobe-plugins/linear-start      # start a task from a Linear issue (fzf picker)
-kobe plugin install Sma1lboy/kobe-plugins/lazygit           # lazygit split beside the engine
+kobe plugin install Sma1lboy/kobe-plugins/lazygit           # lazygit in its own tab (or split)
 kobe plugin install Sma1lboy/kobe-plugins/browser           # Chromium in a split pane (carbonyl, self-provisioned)
 kobe plugin install Sma1lboy/kobe-plugins/video             # play any video as ANSI/ASCII characters in a tab
 ```
@@ -27,6 +27,12 @@ Docs: [plugin authoring reference](https://github.com/Sma1lboy/kobe/blob/main/do
 · browse the marketplace at [kobe.sma1lboy.me/plugins](https://kobe.sma1lboy.me/plugins) or `kobe plugin search`.
 
 Keep installed plugins fresh with `kobe plugin outdated` / `kobe plugin update --all`.
+
+> **Renamed in v0.2.0:** these plugins moved from the `examples.*` ids they
+> carried while they lived inside the kobe repo to `kobe.*` — they are
+> official, not examples. `kobe plugin update --all` (kobe ≥ 0.8.33)
+> migrates settings and state to the new id and unregisters the old entry;
+> on older kobe, `kobe plugin uninstall examples.<name>` first.
 
 Fork one, change the `id`, publish your own public repo with the GitHub topic
 `kobe-plugin`, and it appears in the marketplace automatically.

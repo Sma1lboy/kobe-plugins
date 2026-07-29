@@ -1,7 +1,7 @@
-id = "examples.video"
+id = "kobe.video"
 name = "Video"
-version = "0.1.0"
-min_kobe_version = "0.8.24"
+version = "0.2.0"
+min_kobe_version = "0.8.29"
 description = "Play any video as ANSI/ASCII characters in a tab — ffmpeg decode, character render, no real video anywhere"
 platforms = ["macos", "linux"]
 

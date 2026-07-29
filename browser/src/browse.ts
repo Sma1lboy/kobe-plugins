@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// examples.browser — carbonyl (Chromium as terminal cells) in a kobe pane.
+// kobe.browser — carbonyl (Chromium as terminal cells) in a kobe pane.
 //
 // URL choice goes through the HOST'S input dialog (`kobe api prompt` via the
 // SDK's promptUser) so every plugin gets the same input UX; when no TUI can
@@ -83,7 +83,7 @@ try {
   npm.on("close", (code) => {
     if (code === 0) runCarbonyl(localBin)
     else {
-      console.error("examples.browser needs carbonyl (https://github.com/fathyb/carbonyl) and npm to provision it")
+      console.error("kobe.browser needs carbonyl (https://github.com/fathyb/carbonyl) and npm to provision it")
       process.exit(1)
     }
   })

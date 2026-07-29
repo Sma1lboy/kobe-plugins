@@ -1,7 +1,7 @@
-id = "examples.linear-start"
+id = "kobe.linear-start"
 name = "Linear Start"
-version = "0.1.0"
-min_kobe_version = "0.8.22"
+version = "0.2.0"
+min_kobe_version = "0.8.29"
 description = "Pick a Linear issue and start a kobe task on the issue's branch, with the issue as the first prompt"
 platforms = ["macos", "linux"]
 
