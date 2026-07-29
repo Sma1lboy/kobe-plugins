@@ -15,3 +15,25 @@ command = ["sh", "$KOBE_PLUGIN_ROOT/play.sh"]
 id = "open"
 title = "Play a video file/URL as characters"
 command = ["sh", "open.sh"]
+
+[[settings]]
+key = "KOBE_VIDEO_MODE"
+label = "Render style"
+type = "enum"
+options = ["half", "ascii"]
+default = "half"
+
+[[settings]]
+key = "KOBE_VIDEO_FPS"
+label = "Frames per second"
+type = "number"
+default = "15"
+
+[[settings]]
+key = "KOBE_VIDEO_LOOP"
+label = "Loop playback"
+type = "boolean"
+
+[[file_handlers]]
+pattern = "\\.(mp4|mov|m4v|webm|mkv|avi)$"
+action = "open"

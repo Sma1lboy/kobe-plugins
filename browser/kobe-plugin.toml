@@ -20,3 +20,9 @@ command = ["sh", "$KOBE_PLUGIN_ROOT/browse.sh"]
 id = "open"
 title = "Open a URL in the browser pane"
 command = ["sh", "open.sh"]
+
+[[settings]]
+key = "BROWSER_HOME"
+label = "Home page URL"
+type = "string"
+default = "https://example.com"
