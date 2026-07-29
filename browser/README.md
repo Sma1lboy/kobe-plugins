@@ -9,7 +9,7 @@ scrolling, even video.
 ```bash
 kobe plugin install Sma1lboy/kobe-plugins/browser    # self-provisions carbonyl into the plugin dir
 
-kobe plugin pane open examples.browser.browse                          # last URL / home
+kobe plugin pane open examples.browser.browse    # inline url prompt (enter = last URL / home)
 kobe plugin action invoke examples.browser.open localhost:5173         # open a URL
 ```
 
