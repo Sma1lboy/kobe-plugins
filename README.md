@@ -13,6 +13,7 @@ kobe plugin install Sma1lboy/kobe-plugins/linear-start      # start a task from 
 kobe plugin install Sma1lboy/kobe-plugins/lazygit           # lazygit in its own tab (or split)
 kobe plugin install Sma1lboy/kobe-plugins/browser           # Chromium in a split pane (carbonyl, self-provisioned)
 kobe plugin install Sma1lboy/kobe-plugins/video             # play any video as ANSI/ASCII characters in a tab
+kobe plugin install Sma1lboy/kobe-plugins/image             # preview an image in a split (half-block cells, GIFs too)
 ```
 
 These plugins are written in TypeScript on

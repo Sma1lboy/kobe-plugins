@@ -1,0 +1,16 @@
+{
+  "name": "kobe-plugin-image",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@sma1lboy/kobe-plugin-sdk": "^0.1.1",
+    "terminal-image": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}

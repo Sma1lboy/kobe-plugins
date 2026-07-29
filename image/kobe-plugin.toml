@@ -1,0 +1,39 @@
+id = "kobe.image"
+name = "Image"
+version = "0.1.0"
+min_kobe_version = "0.8.29"
+description = "Preview an image in a pane — half-block truecolor cells, animated GIFs included"
+platforms = ["macos", "linux"]
+
+# Self-provisioning like the browser plugin: the renderer (terminal-image,
+# pure JS on jimp — no native addons, nothing global) lands inside this
+# plugin's own directory at install time, then the TS entrypoints compile.
+[[build]]
+command = ["npm", "install", "--no-audit", "--no-fund"]
+
+[[build]]
+command = ["npm", "run", "build"]
+
+[[panes]]
+id = "view"
+title = "Image"
+placement = "split"
+command = ["node", "$KOBE_PLUGIN_ROOT/dist/view.js"]
+
+[[actions]]
+id = "open"
+title = "Preview an image file"
+command = ["node", "dist/open.js"]
+
+[[settings]]
+key = "KOBE_IMAGE_FIT"
+label = "Fit"
+type = "enum"
+options = ["contain", "width"]
+default = "contain"
+
+# Files-pane Enter on an image lands in `open`, which remembers the path
+# and opens the pane. Raster formats only — jimp cannot rasterize SVG.
+[[file_handlers]]
+pattern = "\\.(png|jpe?g|gif|webp|bmp|tiff?)$"
+action = "open"
