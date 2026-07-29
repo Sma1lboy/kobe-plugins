@@ -12,6 +12,7 @@ kobe plugin install Sma1lboy/kobe-plugins/worktree-include  # copy .env-style fi
 kobe plugin install Sma1lboy/kobe-plugins/linear-start      # start a task from a Linear issue (fzf picker)
 kobe plugin install Sma1lboy/kobe-plugins/lazygit           # lazygit split beside the engine
 kobe plugin install Sma1lboy/kobe-plugins/browser           # Chromium in a split pane (carbonyl, self-provisioned)
+kobe plugin install Sma1lboy/kobe-plugins/video             # play any video as ANSI/ASCII characters in a tab
 ```
 
 Docs: [plugin authoring & manifest reference](https://github.com/Sma1lboy/kobe/blob/main/docs/design/plugins.md)
